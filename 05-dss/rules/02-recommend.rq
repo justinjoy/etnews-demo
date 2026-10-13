@@ -1,0 +1,14 @@
+PREFIX city: <http://k.fc/onto/city#>
+PREFIX dss: <https://example.org/dss#>
+CONSTRUCT {
+  ?recommendation a dss:Recommendation ;
+      dss:aboutArea ?area ; dss:basedOn ?observation ;
+      dss:action dss:AvoidVisit ; dss:derivedBy dss:R2 ;
+      dss:observedAt ?time .
+}
+WHERE {
+  ?area a city:Area ; city:hasPopulationStatus ?observation .
+  ?observation a dss:CrowdedObservation ;
+               dss:classifiedBy dss:R1 ; city:observedAt ?time .
+  BIND(IRI(CONCAT(STR(?observation), "/recommendation")) AS ?recommendation)
+}

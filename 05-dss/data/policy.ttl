@@ -1,0 +1,13 @@
+@prefix dss: <https://example.org/dss#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix city: <http://k.fc/onto/city#> .
+
+dss:CrowdedObservation a owl:Class ; rdfs:subClassOf city:PopulationStatus ;
+    rdfs:label "혼잡 관측" .
+dss:Recommendation a owl:Class ; rdfs:label "권고" .
+dss:AvoidVisit rdfs:label "방문 자제 권고" .
+dss:R1 a dss:Rule ; rdfs:label "붐빔 관측 → 혼잡 관측" ;
+    rdfs:comment "기록된 혼잡도가 붐빔이면 해당 시점의 관측을 혼잡 관측으로 분류한다." .
+dss:R2 a dss:Rule ; rdfs:label "혼잡 관측 → 방문 자제 권고" ;
+    rdfs:comment "혼잡 관측이 있는 장소에는 그 관측을 근거로 방문 자제를 권고한다." .

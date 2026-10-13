@@ -1,0 +1,893 @@
+@prefix ex:  <http://k.fc/onto/city#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+#################################################################
+# Ontology header
+#################################################################
+
+ex:CityDataOntology a owl:Ontology ;
+    rdfs:label "Seoul City Data Ontology"@en ;
+    rdfs:comment "서울 실시간 도시데이터(citydata)를 표현하기 위한 온톨로지 TBox (강남역 예시 ABox 기반)."@ko .
+
+#################################################################
+# 상위 개념 클래스 계층
+#################################################################
+
+ex:Entity a owl:Class ;
+    rdfs:label "Entity"@en .
+
+ex:SpatialEntity a owl:Class ;
+    rdfs:subClassOf ex:Entity ;
+    rdfs:label "Spatial entity"@en ;
+    rdfs:comment "공간적 위치를 가지는 모든 물리 객체"@ko .
+
+ex:Facility a owl:Class ;
+    rdfs:subClassOf ex:SpatialEntity ;
+    rdfs:label "Facility"@en .
+
+ex:TransportationFacility a owl:Class ;
+    rdfs:subClassOf ex:Facility ;
+    rdfs:label "Transportation facility"@en .
+
+ex:NetworkElement a owl:Class ;
+    rdfs:subClassOf ex:SpatialEntity ;
+    rdfs:label "Network element"@en .
+
+ex:Observation a owl:Class ;
+    rdfs:subClassOf ex:Entity ;
+    rdfs:label "Observation"@en .
+
+ex:Status a owl:Class ;
+    rdfs:subClassOf ex:Observation ;
+    rdfs:label "Status"@en ;
+    rdfs:comment "특정 시점의 상태를 나타내는 개체"@ko .
+
+ex:Forecast a owl:Class ;
+    rdfs:subClassOf ex:Observation ;
+    rdfs:label "Forecast"@en ;
+    rdfs:comment "미래 상태에 대한 예측 정보를 나타내는 개체"@ko .
+
+ex:Message a owl:Class ;
+    rdfs:subClassOf ex:Entity ;
+    rdfs:label "Message"@en .
+
+#################################################################
+# 도메인별 클래스 정의
+#################################################################
+
+ex:Area a owl:Class ;
+    rdfs:subClassOf ex:SpatialEntity , geo:Feature ;
+    rdfs:label "Area"@en ;
+    rdfs:comment "서울 시내 주요 장소(POI 단위 영역)"@ko .
+
+ex:CityDataObservation a owl:Class ;
+    rdfs:subClassOf ex:Observation ;
+    rdfs:label "City data observation"@en .
+
+# Status 계층
+ex:PopulationStatus a owl:Class ;
+    rdfs:subClassOf ex:Status ;
+    rdfs:label "Population status"@en .
+
+ex:CommercialStatus a owl:Class ;
+    rdfs:subClassOf ex:Status ;
+    rdfs:label "Commercial status"@en .
+
+ex:RoadTrafficSummary a owl:Class ;
+    rdfs:subClassOf ex:Status ;
+    rdfs:label "Road traffic summary"@en .
+
+ex:BusPopulationStatus a owl:Class ;
+    rdfs:subClassOf ex:Status ;
+    rdfs:label "Bus population status"@en .
+
+ex:SubwayPopulationStatus a owl:Class ;
+    rdfs:subClassOf ex:Status ;
+    rdfs:label "Subway population status"@en .
+
+ex:WeatherStatus a owl:Class ;
+    rdfs:subClassOf ex:Status ;
+    rdfs:label "Weather status"@en .
+
+# Forecast 계층
+ex:PopulationForecast a owl:Class ;
+    rdfs:subClassOf ex:Forecast ;
+    rdfs:label "Population forecast"@en .
+
+ex:WeatherForecast a owl:Class ;
+    rdfs:subClassOf ex:Forecast ;
+    rdfs:label "Weather forecast"@en .
+
+# 상권 업종별 세부
+ex:CommercialSectorStatus a owl:Class ;
+    rdfs:subClassOf ex:Observation ;
+    rdfs:label "Commercial sector status"@en .
+
+# 메시지
+ex:DisturbanceMessage a owl:Class ;
+    rdfs:subClassOf ex:Message ;
+    rdfs:label "Disturbance message"@en .
+
+# 교통/인프라
+ex:SubwayStation a owl:Class ;
+    rdfs:subClassOf ex:TransportationFacility , geo:Feature ;
+    rdfs:label "Subway station"@en .
+
+ex:BusStop a owl:Class ;
+    rdfs:subClassOf ex:TransportationFacility , geo:Feature ;
+    rdfs:label "Bus stop"@en .
+
+ex:BikeStation a owl:Class ;
+    rdfs:subClassOf ex:TransportationFacility , geo:Feature ;
+    rdfs:label "Bike sharing station"@en .
+
+ex:ParkingLot a owl:Class ;
+    rdfs:subClassOf ex:Facility , geo:Feature ;
+    rdfs:label "Parking lot"@en .
+
+ex:EVChargerStation a owl:Class ;
+    rdfs:subClassOf ex:Facility , geo:Feature ;
+    rdfs:label "EV charger station"@en .
+
+ex:EVCharger a owl:Class ;
+    rdfs:subClassOf ex:Entity ;
+    rdfs:label "EV charger"@en .
+
+# 도로 네트워크
+ex:RoadNode a owl:Class ;
+    rdfs:subClassOf ex:NetworkElement , geo:Feature ;
+    rdfs:label "Road node"@en .
+
+ex:RoadLink a owl:Class ;
+    rdfs:subClassOf ex:NetworkElement , geo:Feature ;
+    rdfs:label "Road link"@en .
+
+#################################################################
+# Object properties
+#################################################################
+
+ex:observedArea a owl:ObjectProperty ;
+    rdfs:domain ex:CityDataObservation ;
+    rdfs:range  ex:Area .
+
+ex:hasPopulationStatus a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:PopulationStatus .
+
+ex:hasCommercialStatus a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:CommercialStatus .
+
+ex:hasRoadTrafficSummary a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:RoadTrafficSummary .
+
+ex:hasBusPopulationStatus a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:BusPopulationStatus .
+
+ex:hasSubwayPopulationStatus a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:SubwayPopulationStatus .
+
+ex:hasWeatherStatus a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:WeatherStatus .
+
+ex:hasDisturbanceMessage a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:DisturbanceMessage .
+
+ex:hasSubwayStation a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:SubwayStation .
+
+ex:hasBusStop a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:BusStop .
+
+ex:hasBikeStation a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:BikeStation .
+
+ex:hasParkingLot a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:ParkingLot .
+
+ex:hasEVChargerStation a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:EVChargerStation .
+
+ex:hasRoadLink a owl:ObjectProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  ex:RoadLink .
+
+ex:hasEVCharger a owl:ObjectProperty ;
+    rdfs:domain ex:EVChargerStation ;
+    rdfs:range  ex:EVCharger .
+
+ex:hasSectorStatus a owl:ObjectProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  ex:CommercialSectorStatus .
+
+ex:hasPopulationForecast a owl:ObjectProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  ex:PopulationForecast .
+
+ex:hasWeatherForecast a owl:ObjectProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  ex:WeatherForecast .
+
+ex:startNode a owl:ObjectProperty ;
+    rdfs:domain ex:RoadLink ;
+    rdfs:range  ex:RoadNode .
+
+ex:endNode a owl:ObjectProperty ;
+    rdfs:domain ex:RoadLink ;
+    rdfs:range  ex:RoadNode .
+
+#################################################################
+# Data properties (공통)
+#################################################################
+
+ex:observedAt a owl:DatatypeProperty ;
+    rdfs:domain ex:Observation ;
+    rdfs:range  xsd:dateTime .
+
+ex:areaCode a owl:DatatypeProperty ;
+    rdfs:domain ex:Area ;
+    rdfs:range  xsd:string .
+
+#################################################################
+# PopulationStatus / PopulationForecast
+#################################################################
+
+ex:area_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:area_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:congestionLevel a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:string .
+
+ex:congestionMessage a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:string .
+
+ex:male_ppltn_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:female_ppltn_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:non_resnt_ppltn_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:resnt_ppltn_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:ppltn_rate_0 a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:ppltn_rate_10 a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:ppltn_rate_20 a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:ppltn_rate_30 a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:ppltn_rate_40 a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:ppltn_rate_50 a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:ppltn_rate_60 a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:ppltn_rate_70 a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationStatus ;
+    rdfs:range  xsd:decimal .
+
+# Forecast
+ex:fcst_congest_lvl a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationForecast ;
+    rdfs:range  xsd:string .
+
+ex:fcst_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationForecast ;
+    rdfs:range  xsd:integer .
+
+ex:fcst_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:PopulationForecast ;
+    rdfs:range  xsd:integer .
+
+ex:forecastTime a owl:DatatypeProperty ;
+    rdfs:domain ex:Forecast ;
+    rdfs:range  xsd:dateTime .
+
+#################################################################
+# CommercialStatus / CommercialSectorStatus
+#################################################################
+
+ex:area_cmrcl_lvl a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:string .
+
+ex:area_sh_payment_cnt a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:integer .
+
+ex:area_sh_payment_amt_min a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:integer .
+
+ex:area_sh_payment_amt_max a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:integer .
+
+ex:cmrcl_10_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:cmrcl_20_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:cmrcl_30_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:cmrcl_40_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:cmrcl_50_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:cmrcl_60_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:cmrcl_personal_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:cmrcl_corporation_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:cmrcl_male_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:cmrcl_female_rate a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:cmrcl_time a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialStatus ;
+    rdfs:range  xsd:string .
+
+# Sector status
+ex:rsb_lrg_ctgr a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialSectorStatus ;
+    rdfs:range  xsd:string .
+
+ex:rsb_mid_ctgr a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialSectorStatus ;
+    rdfs:range  xsd:string .
+
+ex:rsb_payment_lvl a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialSectorStatus ;
+    rdfs:range  xsd:string .
+
+ex:rsb_sh_payment_cnt a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialSectorStatus ;
+    rdfs:range  xsd:integer .
+
+ex:rsb_sh_payment_amt_min a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialSectorStatus ;
+    rdfs:range  xsd:integer .
+
+ex:rsb_sh_payment_amt_max a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialSectorStatus ;
+    rdfs:range  xsd:integer .
+
+ex:rsb_mct_cnt a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialSectorStatus ;
+    rdfs:range  xsd:integer .
+
+ex:rsb_mct_time a owl:DatatypeProperty ;
+    rdfs:domain ex:CommercialSectorStatus ;
+    rdfs:range  xsd:string .
+
+#################################################################
+# WeatherStatus / WeatherForecast
+#################################################################
+
+# 공통: temp/precipitation 등은 상태와 예측 모두에서 사용되므로 상위로 둡니다.
+ex:temp a owl:DatatypeProperty ;
+    rdfs:domain ex:Observation ;
+    rdfs:range  xsd:decimal .
+
+ex:precipitation a owl:DatatypeProperty ;
+    rdfs:domain ex:Observation ;
+    rdfs:range  xsd:string .
+
+ex:precpt_type a owl:DatatypeProperty ;
+    rdfs:domain ex:Observation ;
+    rdfs:range  xsd:string .
+
+# WeatherStatus 전용
+ex:humidity a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:integer .
+
+ex:max_temp a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:min_temp a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:sensible_temp a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:sunrise a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:sunset a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:uv_index a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:uv_index_lvl a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:uv_msg a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:pm25_index a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:pm25 a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:integer .
+
+ex:pm10_index a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:pm10 a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:integer .
+
+ex:air_idx a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:air_idx_mvl a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:decimal .
+
+ex:air_idx_main a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:air_msg a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:pcp_msg a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:wind_dirct a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:string .
+
+ex:wind_spd a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherStatus ;
+    rdfs:range  xsd:decimal .
+
+# WeatherForecast 전용
+ex:rain_chance a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherForecast ;
+    rdfs:range  xsd:integer .
+
+ex:sky_stts a owl:DatatypeProperty ;
+    rdfs:domain ex:WeatherForecast ;
+    rdfs:range  xsd:string .
+
+#################################################################
+# BusPopulationStatus
+#################################################################
+
+ex:bus_10wthn_gtoff_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_10wthn_gtoff_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_10wthn_gton_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_10wthn_gton_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_30wthn_gtoff_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_30wthn_gtoff_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_30wthn_gton_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_30wthn_gton_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_5wthn_gtoff_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_5wthn_gtoff_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_5wthn_gton_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_5wthn_gton_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_acml_gtoff_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_acml_gtoff_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_acml_gton_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_acml_gton_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_stn_cnt a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:bus_stn_time a owl:DatatypeProperty ;
+    rdfs:domain ex:BusPopulationStatus ;
+    rdfs:range  xsd:string .
+
+#################################################################
+# SubwayPopulationStatus
+#################################################################
+
+ex:sub_10wthn_gtoff_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_10wthn_gtoff_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_10wthn_gton_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_10wthn_gton_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_30wthn_gtoff_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_30wthn_gtoff_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_30wthn_gton_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_30wthn_gton_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_5wthn_gtoff_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_5wthn_gtoff_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_5wthn_gton_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_5wthn_gton_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_acml_gtoff_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_acml_gtoff_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_acml_gton_ppltn_min a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_acml_gton_ppltn_max a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_stn_cnt a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:integer .
+
+ex:sub_stn_time a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayPopulationStatus ;
+    rdfs:range  xsd:string .
+
+#################################################################
+# EVChargerStation / EVCharger
+#################################################################
+
+ex:stat_addr a owl:DatatypeProperty ;
+    rdfs:domain ex:EVChargerStation ;
+    rdfs:range  xsd:string .
+
+ex:stat_kinddetail a owl:DatatypeProperty ;
+    rdfs:domain ex:EVChargerStation ;
+    rdfs:range  xsd:string .
+
+ex:stat_limityn a owl:DatatypeProperty ;
+    rdfs:domain ex:EVChargerStation ;
+    rdfs:range  xsd:string .
+
+ex:stat_limitdetail a owl:DatatypeProperty ;
+    rdfs:domain ex:EVChargerStation ;
+    rdfs:range  xsd:string .
+
+ex:stat_parkpay a owl:DatatypeProperty ;
+    rdfs:domain ex:EVChargerStation ;
+    rdfs:range  xsd:string .
+
+ex:stat_usetime a owl:DatatypeProperty ;
+    rdfs:domain ex:EVChargerStation ;
+    rdfs:range  xsd:string .
+
+ex:charger_type a owl:DatatypeProperty ;
+    rdfs:domain ex:EVCharger ;
+    rdfs:range  xsd:string .
+
+ex:charger_stat a owl:DatatypeProperty ;
+    rdfs:domain ex:EVCharger ;
+    rdfs:range  xsd:string .
+
+ex:output a owl:DatatypeProperty ;
+    rdfs:domain ex:EVCharger ;
+    rdfs:range  xsd:string .
+
+ex:method a owl:DatatypeProperty ;
+    rdfs:domain ex:EVCharger ;
+    rdfs:range  xsd:string .
+
+ex:lasttsdt a owl:DatatypeProperty ;
+    rdfs:domain ex:EVCharger ;
+    rdfs:range  xsd:dateTime .
+
+ex:lasttedt a owl:DatatypeProperty ;
+    rdfs:domain ex:EVCharger ;
+    rdfs:range  xsd:dateTime .
+
+ex:nowtsdt a owl:DatatypeProperty ;
+    rdfs:domain ex:EVCharger ;
+    rdfs:range  xsd:dateTime .
+
+ex:statupddt a owl:DatatypeProperty ;
+    rdfs:domain ex:EVCharger ;
+    rdfs:range  xsd:dateTime .
+
+#################################################################
+# ParkingLot
+#################################################################
+
+ex:parkingCode a owl:DatatypeProperty ;
+    rdfs:domain ex:ParkingLot ;
+    rdfs:range  xsd:string .
+
+ex:address a owl:DatatypeProperty ;
+    rdfs:domain ex:ParkingLot ;
+    rdfs:range  xsd:string .
+
+ex:cpcty a owl:DatatypeProperty ;
+    rdfs:domain ex:ParkingLot ;
+    rdfs:range  xsd:integer .
+
+ex:pay_yn a owl:DatatypeProperty ;
+    rdfs:domain ex:ParkingLot ;
+    rdfs:range  xsd:string .
+
+ex:prk_type a owl:DatatypeProperty ;
+    rdfs:domain ex:ParkingLot ;
+    rdfs:range  xsd:string .
+
+ex:rates a owl:DatatypeProperty ;
+    rdfs:domain ex:ParkingLot ;
+    rdfs:range  xsd:integer .
+
+ex:time_rates a owl:DatatypeProperty ;
+    rdfs:domain ex:ParkingLot ;
+    rdfs:range  xsd:integer .
+
+ex:add_rates a owl:DatatypeProperty ;
+    rdfs:domain ex:ParkingLot ;
+    rdfs:range  xsd:integer .
+
+ex:add_time_rates a owl:DatatypeProperty ;
+    rdfs:domain ex:ParkingLot ;
+    rdfs:range  xsd:integer .
+
+ex:cur_prk_yn a owl:DatatypeProperty ;
+    rdfs:domain ex:ParkingLot ;
+    rdfs:range  xsd:string .
+
+#################################################################
+# BikeStation
+#################################################################
+
+ex:sbike_shared a owl:DatatypeProperty ;
+    rdfs:domain ex:BikeStation ;
+    rdfs:range  xsd:integer .
+
+ex:sbike_parking_cnt a owl:DatatypeProperty ;
+    rdfs:domain ex:BikeStation ;
+    rdfs:range  xsd:integer .
+
+ex:sbike_rack_cnt a owl:DatatypeProperty ;
+    rdfs:domain ex:BikeStation ;
+    rdfs:range  xsd:integer .
+
+#################################################################
+# BusStop / BusPopulationStatus
+#################################################################
+
+ex:bus_stn_id a owl:DatatypeProperty ;
+    rdfs:domain ex:BusStop ;
+    rdfs:range  xsd:string .
+
+ex:bus_ars_id a owl:DatatypeProperty ;
+    rdfs:domain ex:BusStop ;
+    rdfs:range  xsd:string .
+
+#################################################################
+# SubwayStation
+#################################################################
+
+ex:subwayLine a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayStation ;
+    rdfs:range  xsd:string .
+
+ex:roadAddress a owl:DatatypeProperty ;
+    rdfs:domain ex:SubwayStation ;
+    rdfs:range  xsd:string .
+
+#################################################################
+# RoadTrafficSummary / RoadLink
+#################################################################
+
+ex:roadMessage a owl:DatatypeProperty ;
+    rdfs:domain ex:RoadTrafficSummary ;
+    rdfs:range  xsd:string .
+
+ex:roadTrafficIndex a owl:DatatypeProperty ;
+    rdfs:domain ex:RoadTrafficSummary ;
+    rdfs:range  xsd:string .
+
+ex:roadTrafficSpeed a owl:DatatypeProperty ;
+    rdfs:domain ex:RoadTrafficSummary ;
+    rdfs:range  xsd:decimal .
+
+ex:dist a owl:DatatypeProperty ;
+    rdfs:domain ex:RoadLink ;
+    rdfs:range  xsd:decimal .
+
+ex:spd a owl:DatatypeProperty ;
+    rdfs:domain ex:RoadLink ;
+    rdfs:range  xsd:decimal .
+
+ex:idx a owl:DatatypeProperty ;
+    rdfs:domain ex:RoadLink ;
+    rdfs:range  xsd:string .
+
+#################################################################
+# DisturbanceMessage
+#################################################################
+
+ex:dst_se_nm a owl:DatatypeProperty ;
+    rdfs:domain ex:DisturbanceMessage ;
+    rdfs:range  xsd:string .
+
+ex:emrg_step_nm a owl:DatatypeProperty ;
+    rdfs:domain ex:DisturbanceMessage ;
+    rdfs:range  xsd:string .
+
+ex:msg_cn a owl:DatatypeProperty ;
+    rdfs:domain ex:DisturbanceMessage ;
+    rdfs:range  xsd:string .
+
+ex:crt_dt a owl:DatatypeProperty ;
+    rdfs:domain ex:DisturbanceMessage ;
+    rdfs:range  xsd:dateTime .
+
+#################################################################
+# JSON 전체 보존용 generic 프로퍼티
+#################################################################
+
+ex:jsonValue a rdf:Property ;
+    rdfs:label "raw JSON value"@en ;
+    rdfs:comment "citydata 원본 JSON 키/값을 그대로 보존하기 위한 generic 프로퍼티"@ko .
+
+ex:json_CITYDATA a rdf:Property ;
+    rdfs:subPropertyOf ex:jsonValue .
+
+ex:json_RESULT a rdf:Property ;
+    rdfs:subPropertyOf ex:jsonValue .
+
+ex:json_list_total_count a rdf:Property ;
+    rdfs:subPropertyOf ex:jsonValue .

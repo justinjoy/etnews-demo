@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6f8">
+  <title>벡터로 찾는 답 · Mini RAG Lab</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="rag.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">↗</span> MINI RAG <span class="brand-light">LAB</span></a><span class="header-note">INTERACTIVE DEMO <span class="live-dot"></span> 브라우저에서 직접 실행</span></header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">01 / RETRIEVAL, MADE VISIBLE</p><h1>벡터로 찾는 <span>답.</span></h1><p class="intro-copy">질문과 문서는 얼마나 닮았을까요?<br>텍스트가 벡터가 되고, 유사도가 검색 결과가 되는 과정을 살펴보세요.</p></div>
+      <div class="concept-note"><span class="small-label">오늘의 핵심</span><p>검색을 하는 것은<br><strong>벡터 유사도</strong>입니다.</p><span>mini_rag.py → interactive web</span></div>
+    </section>
+    <nav class="pipeline" aria-label="검색 과정"><span><b>01</b> 문서 임베딩 <small>미리 준비된 3개 문서</small></span><i aria-hidden="true">→</i><span><b>02</b> 질문 임베딩 <small>문자 bigram 빈도</small></span><i aria-hidden="true">→</i><span class="current"><b>03</b> 유사도 검색 <small>코사인 유사도</small></span><i aria-hidden="true">→</i><span><b>04</b> 근거 선택 <small>가장 닮은 문서</small></span></nav>
+    <section class="query-panel" aria-labelledby="query-title">
+      <div class="section-title"><h2 id="query-title"><span class="step">Q</span> 무엇이 궁금한가요?</h2><span class="muted">질문을 바꾸면 시각화가 바로 달라집니다</span></div>
+      <form id="query-form"><label class="sr-only" for="query">검색할 질문</label><input id="query" type="text" value="환불 배송 회원" maxlength="500" autocomplete="off" spellcheck="false" placeholder="예: 환불은 언제까지 가능한가요?"><button class="search-button" type="submit">유사도 비교 <span aria-hidden="true">↗</span></button></form>
+      <div class="examples"><span>예시 질문</span><button type="button" data-query="환불은 언제까지 가능한가요?">환불 기한</button><button type="button" data-query="배송은 며칠 걸리나요?">배송 기간</button><button type="button" data-query="회원 등급은 어떻게 결정되나요?">회원 등급</button><button type="button" data-query="환불 배송 회원">함께 비교</button><button type="button" data-query="오늘 날씨 어때요?">관련 없는 질문</button></div>
+      <p id="query-status" class="query-status" role="status" aria-live="polite"></p>
+    </section>
+    <div class="visual-grid">
+      <section class="panel ranking-panel" aria-labelledby="ranking-title"><div class="section-title"><h2 id="ranking-title">문서별 유사도</h2><span class="pill">COSINE SIMILARITY</span></div><p class="panel-description">막대가 길수록 질문과 겹치는 패턴이 많습니다.</p><div id="rankings"></div><div class="scale"><span>0 · 겹침 없음</span><span>1 · 같은 벡터 방향</span></div><div class="result" id="result"></div></section>
+      <section class="panel angle-panel" aria-labelledby="angle-title"><div class="section-title"><h2 id="angle-title">각도로 보는 유사도</h2><span class="pill">cos θ</span></div><p class="panel-description">질문 벡터와의 각도가 작을수록 더 가깝습니다.</p><div id="angle-chart"></div><div class="legend"><span class="legend-query">질문</span><span class="doc-0">D1 환불</span><span class="doc-1">D2 배송</span><span class="doc-2">D3 회원</span></div><p class="chart-note">각 문서와 질문 사이의 실제 각도를 한 평면에 모았습니다.<br>문서끼리의 거리와 각도는 표현하지 않습니다.</p></section>
+    </div>
+    <section class="panel detail-panel" aria-labelledby="detail-title"><div class="section-title"><div><p class="eyebrow">UNDER THE HOOD</p><h2 id="detail-title">왜 이 문서가 가까울까요?</h2></div><label class="select-label">비교 문서 <select id="document-select"><option value="0">D1 · 환불 안내</option><option value="1">D2 · 배송 안내</option><option value="2">D3 · 회원 등급</option></select></label></div>
+      <div class="detail-grid"><div><div class="token-heading"><h3>질문을 쪼개면</h3><span id="query-token-count"></span></div><p class="explanation">공백을 제거한 뒤, 연속된 문자 2개씩 묶습니다.</p><div class="tokens" id="query-tokens"></div></div><div><div class="token-heading"><h3 id="document-token-title">문서를 쪼개면</h3><span id="doc-token-count"></span></div><p class="explanation" id="selected-document"></p><div class="tokens" id="document-tokens"></div></div></div>
+      <div class="detail-bottom"><span><span class="overlap-key"></span> 색칠된 묶음 = 질문과 문서의 공통 bigram <span class="muted">· ×숫자는 반복 횟수</span></span><strong id="overlap-count"></strong></div>
+      <div class="formula"><div><span class="small-label">코사인 유사도</span><p>내적 ÷ (질문 벡터 길이 × 문서 벡터 길이)</p></div><div id="formula-value"></div></div>
+    </section>
+    <footer><p><strong>작은 벡터, 실제 검색.</strong> 원본과 같은 문자 bigram 빈도 벡터를 사용합니다.</p><p>의미를 이해하는 신경망 임베딩이나 LLM 답변 생성은 포함하지 않습니다. 유사도는 정답 확률이 아닙니다.</p><span>MINI RAG LAB / 01</span></footer>
+  </main>
+</body>
+</html>

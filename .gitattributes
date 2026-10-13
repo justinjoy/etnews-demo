@@ -1,0 +1,26 @@
+# Normalize text files to LF; detect binary files automatically.
+* text=auto eol=lf
+
+# Source, documentation, and RDF/SPARQL data
+*.py text
+*.js text
+*.cjs text
+*.html text
+*.css text
+*.json text
+*.md text
+*.txt text
+*.ttl text
+*.rq text
+*.csv text
+*.sh text
+
+# Binary assets
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.zip binary

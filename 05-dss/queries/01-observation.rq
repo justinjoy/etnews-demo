@@ -1,0 +1,11 @@
+PREFIX city: <http://k.fc/onto/city#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?area ?name ?observation ?level ?time
+WHERE {
+  ?area a city:Area ; city:areaCode "POI014" ;
+        rdfs:label ?name ; city:hasPopulationStatus ?observation .
+  ?observation a city:PopulationStatus ; city:observedAt ?time .
+  OPTIONAL { ?observation city:congestionLevel ?level }
+}
+ORDER BY DESC(?time) STR(?observation)
+LIMIT 1

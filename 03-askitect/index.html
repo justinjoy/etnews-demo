@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6fa"><title>Askitect · 근거로 결정하는 AI</title>
+  <link rel="stylesheet" href="styles.css"><script src="app.js" defer></script>
+</head>
+<body>
+  <header><a href="./" class="brand"><span class="brand-mark" aria-hidden="true">A</span> ASKITECT <span>LAB</span></a><span class="header-note">RAG EXPERIMENTS <b>/ 03</b></span></header>
+  <main>
+    <section class="hero"><div><p class="eyebrow">LANGUAGE MEETS LOGIC</p><h1>모르는 것은 묻고,<br>판단은 <em>근거로.</em></h1><p>자연어를 이해하는 Claude와 규칙을 검증하는 지식 그래프.<br>추측 대신 재질의로 완성하는 결재 승인권자 탐색 과정을 경험하세요.</p></div><div class="role-key"><div><span class="role-icon intuition">✦</span><span><strong>언어 · CLAUDE CLI</strong><small>요청 추출 · 재질의 · 답변 작성</small></span></div><div><span class="role-icon logic">⌘</span><span><strong>판단 · RDF + SPARQL</strong><small>필수 정보 확인 · 금액 규칙 · 위임</small></span></div><p>실제 모델 호출 · 실제 그래프 질의</p></div></section>
+    <nav class="pipeline" aria-label="처리 단계"><div data-phase="extract"><span>01</span><strong>추출</strong><small>CLAUDE</small></div><i>→</i><div data-phase="commit"><span>02</span><strong>그래프 적재</strong><small>RDF</small></div><i>→</i><div data-phase="validate"><span>03</span><strong>누락 검증</strong><small>SPARQL</small></div><i>↔</i><div data-phase="clarify"><span>04</span><strong>다시 묻기</strong><small>USER + CLAUDE</small></div><i>→</i><div data-phase="rule"><span>05</span><strong>규칙 판단</strong><small>SPARQL</small></div><i>→</i><div data-phase="answer"><span>06</span><strong>답변</strong><small>CLAUDE</small></div></nav>
+    <div class="connection"><span id="connection">서버 연결 확인 중…</span><span id="model"></span></div>
+    <div id="error" class="error" role="alert" hidden></div>
+    <div class="workspace">
+      <aside class="left-column">
+        <section class="panel request-panel"><div class="section-heading"><h2>결재 요청</h2><span class="badge">INPUT</span></div><form id="request-form"><label for="request">자연어로 요청을 입력하세요</label><textarea id="request" rows="3" maxlength="3000" required>마케팅팀에서 4,000만 원짜리 집행 건을 올렸습니다.</textarea><div class="presets"><button type="button" data-preset="delegated">4천만 원 · 위임</button><button type="button" data-preset="below">1,200만 원 · 원본</button><button type="button" data-preset="unknown">인사팀 · 규칙 없음</button></div><label for="question">최종 질문</label><input id="question" maxlength="1000" value="이 결재 건의 승인권자는 누구인가요?" required><label class="toggle-label"><input id="delegation" type="checkbox" checked><span>본부장 → 위임 팀장 관계 적용</span></label><p class="input-note">위임 설정은 이번 실행의 그래프에만 적용됩니다.</p><div class="actions"><button id="run" class="primary" disabled>✦ 실제 Claude로 실행</button><button id="cancel" type="button" class="secondary" disabled>취소</button></div></form></section>
+        <section class="panel fields-panel"><div class="section-heading"><h2>구조화된 요청</h2><span class="badge" id="field-count">0 / 3</span></div><p class="description">추출값과 사용자가 보완한 값을 구분합니다.</p><div id="fields"></div><div id="issues" class="input-note"></div></section>
+        <section class="panel clarification" id="clarification" hidden><div class="section-heading"><h2>빠진 정보를 알려주세요</h2><span class="badge amber">ASK AGAIN</span></div><p class="description">SPARQL이 누락을 찾고, Claude가 질문했습니다.</p><form id="answers-form"><div id="questions"></div><button id="submit-answers" class="primary">정보를 채우고 검증 계속 →</button></form><p class="input-note">입력하기 전에는 승인권자를 결정하지 않습니다.</p></section>
+      </aside>
+      <div class="right-column">
+        <section class="panel graph-panel"><div class="section-heading"><div><p class="eyebrow">LIVE KNOWLEDGE GRAPH</p><h2>판단의 근거가 연결되는 곳</h2></div><span id="graph-badge" class="badge">원본 정책 미리보기</span></div><p class="description" id="graph-description">실행하면 요청의 부서·금액·목적이 실제 RDF 관계로 추가됩니다.</p><div id="graph" class="graph-canvas"></div><div class="graph-legend"><span class="legend-request">요청 / 입력값</span><span class="legend-rule">규칙 / 승인권자</span><span class="legend-path">확정된 승인 경로</span></div><div class="rule-strip"><span>원본 정책</span><strong>Marketing · 금액 &gt; 30,000,000원</strong><small>기본 승인자 Director → 위임 시 DelegatedTeamLead</small></div></section>
+        <section class="panel decision-panel"><div class="section-heading"><h2>규칙 판단과 실제 답변</h2><span class="badge" id="decision-badge">WAITING</span></div><div id="decision"></div><div id="answer"></div></section>
+        <section class="panel timeline-panel"><div class="section-heading"><h2>실행 기록</h2><span id="run-id" class="badge">실행 전</span></div><p id="run-status" class="description" role="status" aria-live="polite">실행 버튼을 누르면 실제 Claude CLI를 호출합니다.</p><ol id="timeline"></ol></section>
+      </div>
+    </div>
+    <section class="panel inspector"><div class="section-heading"><div><p class="eyebrow">INSPECT THE EVIDENCE</p><h2>질의와 모델 응답을 직접 확인하세요.</h2></div><div class="downloads"><button id="download-json" class="text-button" disabled>실행 기록 JSON ↓</button><button id="download-graph" class="text-button" disabled>RDF 그래프 TTL ↓</button></div></div><div class="inspector-grid"><details><summary>필수 정보 누락 검사 · SPARQL</summary><pre id="missing-query"></pre></details><details><summary>금액 및 위임 규칙 · SPARQL</summary><pre id="approver-query"></pre></details></div><details><summary>실제 Claude 호출 내역 <span id="call-count">0회</span></summary><div id="calls"></div></details><details><summary>원본 지식 그래프 · askitect.ttl</summary><pre id="ontology"></pre></details></section>
+    <footer><strong>LLM은 언어를 다루고, 그래프는 판단 근거를 제공합니다.</strong><p>이 데모는 rdfs:domain으로 선언한 세 속성을 필수 항목으로 취급합니다. 이는 데모의 검증 규약이며 RDF 자체의 필수값 제약이 아닙니다.<br>실제 사내 결재를 제출하거나 승인하지 않습니다. 결과는 제공된 데모 그래프에 한정됩니다.</p><span>ASKITECT LAB / 03</span></footer>
+  </main>
+</body>
+</html>

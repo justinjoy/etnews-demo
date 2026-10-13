@@ -1,0 +1,14 @@
+@prefix city: <http://k.fc/onto/city#> .
+@prefix dss: <https://example.org/dss#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Requested teaching scenario, not a live or historical measured observation.
+# Uses ch08's Area → PopulationStatus → congestionLevel / observedAt structure.
+city:Area_POI014 a city:Area ;
+    rdfs:label "강남역" ; city:areaCode "POI014" ;
+    city:hasPopulationStatus dss:DemoPopulation_POI014 .
+dss:DemoPopulation_POI014 a city:PopulationStatus ;
+    city:congestionLevel "붐빔" ;
+    city:observedAt "2025-11-21T01:10:00"^^xsd:dateTime ;
+    dss:scenarioNote "시연을 위해 작성한 예시 관측. 시각은 원본 스냅샷의 값을 사용." .

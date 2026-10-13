@@ -1,0 +1,10 @@
+PREFIX city: <http://k.fc/onto/city#>
+PREFIX dss: <https://example.org/dss#>
+CONSTRUCT {
+  ?observation a dss:CrowdedObservation ; dss:classifiedBy dss:R1 .
+}
+WHERE {
+  ?area a city:Area ; city:hasPopulationStatus ?observation .
+  ?observation a city:PopulationStatus ;
+               city:congestionLevel "붐빔" ; city:observedAt ?time .
+}

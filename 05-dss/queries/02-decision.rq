@@ -1,0 +1,13 @@
+PREFIX city: <http://k.fc/onto/city#>
+PREFIX dss: <https://example.org/dss#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?recommendation ?name ?observation ?level ?time ?action ?actionLabel ?rule
+WHERE {
+  ?recommendation a dss:Recommendation ; dss:aboutArea ?area ;
+      dss:basedOn ?observation ; dss:action ?action ;
+      dss:derivedBy ?rule ; dss:observedAt ?time .
+  ?area rdfs:label ?name .
+  ?observation city:congestionLevel ?level .
+  ?action rdfs:label ?actionLabel .
+}
+ORDER BY STR(?recommendation)

@@ -1,0 +1,31 @@
+# Askitect 시나리오 (15:00 Ontology-Grounded RAG) — 스키마 + 결재 요청 인스턴스
+#
+# 슬라이드 "Askitect가 실행하는 SPARQL 예"의 두 질의가 동작하는 데이터입니다.
+#   1) 누락 정보 찾기:  rdfs:domain 으로 ApprovalRequest의 필수 속성을 찾고,
+#                      아직 채워지지 않은 속성을 FILTER NOT EXISTS 로 가려냅니다.
+#   2) 승인권자 찾기:   금액 > 임계값 규칙 + 위임(delegatesTo) 관계로 승인권자를 정합니다.
+
+@prefix ex: <https://example.com/org#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# === 스키마: ApprovalRequest가 가져야 할 속성 ===
+ex:hasDepartment rdfs:domain ex:ApprovalRequest ;
+    rdfs:label "담당 부서" .
+ex:hasAmount rdfs:domain ex:ApprovalRequest ;
+    rdfs:label "금액" .
+ex:hasPurpose rdfs:domain ex:ApprovalRequest ;
+    rdfs:label "목적" .
+
+# === 인스턴스: 부서·금액은 채워졌으나 '목적'이 누락된 요청 ===
+ex:Request_001 a ex:ApprovalRequest ;
+    ex:hasDepartment ex:Marketing ;
+    ex:hasAmount 40000000 .
+
+# === 승인 규칙: Marketing 부서, 3천만 원 초과 시 본부장 결재 ===
+ex:RuleMarketing a ex:ApprovalRule ;
+    ex:forDepartment ex:Marketing ;
+    ex:threshold 30000000 ;
+    ex:defaultApprover ex:Director .
+
+# === 본부장이 휴가 중이라 팀장에게 위임 ===
+ex:Director ex:delegatesTo ex:DelegatedTeamLead .

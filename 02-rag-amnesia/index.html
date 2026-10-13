@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#152337">
+  <meta name="description" content="같은 질문, 다른 기억. RAG의 턴 사이 문맥 소실과 외부 메모리를 비교하는 인터랙티브 데모.">
+  <title>기억을 잇는 RAG · RAG Amnesia Lab</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="data.js" defer></script><script src="rag.js" defer></script><script src="app.js" defer></script>
+</head>
+<body>
+  <header><div class="header-inner"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">↗</span> RAG <span>EXPERIMENTS</span></a><a class="previous" href="../01-mimic-rag/index.html">01 유사도 데모 <span aria-hidden="true">↗</span></a><span class="chapter">EXPERIMENT / 02</span></div></header>
+  <main>
+    <section class="hero"><div><p class="eyebrow">RAG AMNESIA · CONTEXT & MEMORY</p><h1>어제 정한 기준,<br>오늘도 <em>기억할까요?</em></h1><p class="hero-copy">검색은 잘했는데, 판단 기준은 사라졌다.<br>같은 두 번의 질문으로 살펴보는 일반 RAG와 메모리 RAG의 차이.</p></div><div class="hero-diagram" aria-hidden="true"><span class="day">DAY 01</span><div class="mini-memory">30분 걷기 <span>커피 5천원 이하</span> 야식 금지</div><div class="memory-bridge"><span>↘</span><span class="bridge-dot"></span><span>↗</span></div><div class="day-two"><span class="day">DAY 02</span><strong>기억을 연결하는 건<br>저장과 재주입.</strong></div></div></section>
+    <div class="truth-note"><span class="status-dot"></span><strong>실제 TF-IDF 검색</strong><span class="separator">/</span><span>실제 Claude CLI 응답 · 파일 메모리 저장</span></div>
+    <section class="control-panel" aria-labelledby="scenario-title"><div class="scenario-heading"><div><span class="section-kicker">TWO TURNS. TWO PATHS.</span><h2 id="scenario-title">기억이 끊기는 순간을 따라가 보세요.</h2></div><div class="play-controls"><button id="reset" class="icon-button" aria-label="처음으로 되돌리기" title="처음으로">↺</button><button id="play" class="button-primary" disabled>▶ 실제 Claude로 실행</button><button id="cancel" class="button-secondary" disabled>실행 취소</button><button id="next" class="button-secondary">다음 단계 →</button></div></div><div class="steps" aria-label="시연 단계"><button data-step="0"><span>01</span><div><strong>기준 정하기</strong><small>1턴 · 어제 일기</small></div></button><button data-step="1"><span>02</span><div><strong>턴 사이의 기억</strong><small>저장하거나, 잊거나</small></div></button><button data-step="2"><span>03</span><div><strong>오늘 일기 검색</strong><small>2턴 · 컨텍스트 구성</small></div></button><button data-step="3"><span>04</span><div><strong>답변 비교</strong><small>기준 언급 여부 확인</small></div></button></div><p id="step-description" role="status" aria-live="polite"></p></section>
+    <section class="execution-panel" aria-label="Claude 실행 상태"><div><strong id="connection-status">서버 연결 확인 중…</strong><span id="model-info"></span></div><p id="run-status" role="status" aria-live="polite">실행 버튼을 누르면 실제 모델을 호출합니다.</p><p id="run-error" role="alert" hidden></p><div id="call-progress" class="call-progress"></div></section>
+    <section class="query-strip" aria-labelledby="current-query-title"><div class="query-turn" id="query-turn">TURN 01</div><div><h2 id="current-query-title">어제의 일기에서 기준을 정리합니다</h2><p id="current-query"></p></div><div class="top-k-control"><label for="top-k">검색 문서 수 <span>TOP K</span></label><select id="top-k"><option value="1">1개 · 원본 설정</option><option value="2">2개 · 비교 실험</option></select></div></section>
+    <div class="comparison">
+      <section class="mode-panel naive" aria-labelledby="naive-title"><div class="mode-heading"><div><p>MODE A / STATELESS</p><h2 id="naive-title">일반 RAG</h2></div><span class="mode-badge">이전 턴 전달 없음</span></div><div class="mode-body" id="naive-body"></div></section>
+      <section class="mode-panel fixed" aria-labelledby="fixed-title"><div class="mode-heading"><div><p>MODE B / EXTERNAL MEMORY</p><h2 id="fixed-title">메모리를 더한 RAG</h2></div><span class="mode-badge">기준 저장 + 재주입</span></div><div class="mode-body" id="fixed-body"></div></section>
+    </div>
+    <div id="takeaway" class="takeaway" role="status"></div>
+    <section class="inspector" aria-labelledby="inspector-title"><div class="section-heading"><div><p class="section-kicker">OPEN THE BLACK BOX</p><h2 id="inspector-title">검색은 같고, 전달하는 문맥이 다릅니다.</h2></div><span class="local-badge">LOCAL TF-IDF</span></div><div class="inspector-grid"><div class="retrieval"><h3 id="retrieval-title">검색 점수 · 1턴</h3><p class="small-description">문자 bigram + 영문·숫자 단어의 TF-IDF 코사인 유사도</p><div id="retrieval-scores"></div><p class="fine-print">점수는 실제 계산값입니다. 막대는 0~1 고정 척도이며, 정답 확률이 아닙니다.</p></div><div class="memory-inspector"><div class="subheading"><h3>메모리 내용</h3><span id="memory-state"></span></div><p class="small-description">메모리 모드의 실제 1턴 답변을 파일에 저장하고 다시 읽습니다.</p><pre id="memory-content"></pre><button id="download" class="text-button">criteria.md 다운로드 ↓</button><p class="fine-print"><span id="memory-path">실행 전 · 아직 저장된 파일이 없습니다.</span></p></div></div>
+      <details class="prompt-details"><summary>두 모드에 전달할 프롬프트 비교 <span>실제 컨텍스트 확인 ↗</span></summary><p class="small-description"><span id="prompt-note">실행 전에는 준비된 프롬프트를, 실행 후에는 실제 전송한 프롬프트를 표시합니다.</span></p><div class="prompt-grid"><div><h3>MODE A · 일반 RAG</h3><pre id="naive-prompt"></pre></div><div><h3>MODE B · 메모리 RAG</h3><pre id="fixed-prompt"></pre></div></div><details class="system-details"><summary>공통 시스템 프롬프트</summary><p id="system-prompt"></p></details></details>
+    </section>
+    <section class="corpus-section" aria-labelledby="corpus-title"><div class="section-heading"><div><p class="section-kicker">THE SAME SOURCE MATERIAL</p><h2 id="corpus-title">두 모드가 읽는 일기는 같습니다.</h2></div><span class="muted">원본 코퍼스 2개</span></div><div id="corpus" class="corpus-grid"></div></section>
+    <footer><strong>기억은 검색만으로 보장되지 않습니다.</strong><p>이 실험의 일반 RAG는 대화 이력을 전달하지 않습니다. 모든 RAG 시스템이 이전 대화를 잊는다는 뜻은 아닙니다.<br>기준 언급 수는 실제 응답에 대한 원본의 키워드 검사입니다. 결과는 실행마다 달라지며, 생활 기준의 달성률이나 모델 품질 점수가 아닙니다.</p><span>RAG EXPERIMENTS / 02</span></footer>
+  </main>
+</body>
+</html>
