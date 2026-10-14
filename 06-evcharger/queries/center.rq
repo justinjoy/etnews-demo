@@ -1,0 +1,10 @@
+PREFIX city: <http://k.fc/onto/city#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?station ?name ?wkt
+WHERE {
+  city:Area_POI014 city:hasSubwayStation ?station .
+  ?station a city:SubwayStation ; rdfs:label ?name ; city:subwayLine "2" ;
+           geo:hasGeometry/geo:asWKT ?wkt .
+  FILTER(STR(?name) = "강남")
+}

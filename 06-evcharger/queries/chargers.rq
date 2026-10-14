@@ -1,0 +1,11 @@
+PREFIX city: <http://k.fc/onto/city#>
+SELECT ?station ?charger ?status ?output ?type ?updated
+WHERE {
+  city:Area_POI014 city:hasEVChargerStation ?station .
+  ?station city:hasEVCharger ?charger .
+  OPTIONAL { ?charger city:charger_stat ?status }
+  OPTIONAL { ?charger city:output ?output }
+  OPTIONAL { ?charger city:charger_type ?type }
+  OPTIONAL { ?charger city:statupddt ?updated }
+}
+ORDER BY ?station ?charger

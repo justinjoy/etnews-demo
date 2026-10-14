@@ -1,0 +1,43 @@
+PREFIX city: <http://k.fc/onto/city#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX ev: <https://example.org/ev-demo#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT DISTINCT ?station ?name ?address ?access ?accessConflict ?accessNote ?parking ?hours ?wkt
+       ?distance ?total ?busy ?available ?other ?busyRatio ?maxOutput
+WHERE {
+  {
+    SELECT ?station (COUNT(?charger) AS ?total)
+           (SUM(IF(COALESCE(?status, "") = "충전중", 1, 0)) AS ?busy)
+           (SUM(IF(COALESCE(?status, "") = "사용가능", 1, 0)) AS ?available)
+           (MAX(IF(COALESCE(?status, "") = "사용가능",
+                COALESCE(xsd:decimal(?output), 0), 0)) AS ?maxOutput)
+    WHERE {
+      city:Area_POI014 city:hasEVChargerStation ?station .
+      ?station city:hasEVCharger ?charger .
+      OPTIONAL { ?charger city:charger_stat ?status }
+      OPTIONAL { ?charger city:output ?output }
+    }
+    GROUP BY ?station
+  }
+  ?station rdfs:label ?name ; geo:hasGeometry/geo:asWKT ?wkt ; ev:distanceMeters ?distance .
+  OPTIONAL { ?station city:stat_addr ?address }
+  BIND(IF(EXISTS { ?station city:stat_limityn "Y" }, "Y",
+          IF(EXISTS { ?station city:stat_limityn "N" }, "N", "")) AS ?access)
+  BIND(EXISTS { ?station city:stat_limityn "Y" } &&
+       EXISTS { ?station city:stat_limityn "N" } AS ?accessConflict)
+  {
+    SELECT ?station (GROUP_CONCAT(DISTINCT COALESCE(?note, ""); SEPARATOR=" / ") AS ?accessNote)
+    WHERE {
+      city:Area_POI014 city:hasEVChargerStation ?station .
+      OPTIONAL { ?station city:stat_limitdetail ?note }
+    }
+    GROUP BY ?station
+  }
+  OPTIONAL { ?station city:stat_parkpay ?parking }
+  OPTIONAL { ?station city:stat_usetime ?hours }
+  BIND(xsd:decimal(?busy) / ?total AS ?busyRatio)
+  BIND(?total - ?available - ?busy AS ?other)
+  # FILTERS
+}
+ORDER BY ?distance STR(?station)
